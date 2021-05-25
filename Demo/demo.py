@@ -64,10 +64,10 @@ def main(args):
 		
 		# Start of video sequence processing
 		ret, frame = video_capture.read()
-		frame = cv2.flip(frame[:,:,::-1], 1)
 		if not ret:
 			print('Cannot access the webcam')
 			break
+		frame = cv2.flip(frame[:,:,::-1], 1)
 		
 		key = cv2.waitKey(1)			
 		if key == ord('q'):

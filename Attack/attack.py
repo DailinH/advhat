@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 # Prepare image to network input format
 def prep(im):
     if len(im.shape)==3:
+        print(im.shape)
         return np.transpose(im,[2,0,1]).reshape((1,3,112,112))*2-1
     elif len(im.shape)==4:
         return np.transpose(im,[0,3,1,2]).reshape((im.shape[0],3,112,112))*2-1
@@ -140,13 +141,16 @@ def main(args):
         
         # Anchor embedding calculation
         if args.anchor_face!=None:
-                anch_im = rescale(io.imread(args.anchor_face)/255.,112./600.,order=5)
+                read_im = io.imread(args.anchor_face)
+                print(read_im.shape)
+                anch_im = rescale(io.imread(args.anchor_face)/255.,112./600.,order=5,multichannel=True)
+                print(anch_im.shape)
                 fdict2[image_input] = prep(anch_im)
                 fdict2[orig_emb] = sess.run(embedding,feed_dict=fdict2)
         elif args.anchor_emb!=None:
                 fdict2[orig_emb] = np.load(args.anchor_emb)[-1:]
         else:
-                anch_im = rescale(io.imread(args.image)/255.,112./600.,order=5)
+                anch_im = rescale(io.imread(args.image)/255.,112./600.,order=5, multichannel=True)
                 fdict2[image_input] = prep(anch_im)
                 fdict2[orig_emb] = sess.run(embedding,feed_dict=fdict2)
         
@@ -163,15 +167,16 @@ def main(args):
         lr_thresh = 100
         ls = []
         t = time()
-        while True:
+        while tqdm(True):
                 # Projecting sticker to the face and feeding it to the embedding model
                 fdict,ims = gener.gen_random(im0,init_logo)
                 fdict2[image_input] = prep(ims)
                 grad_tmp = sess.run(grads2,feed_dict=fdict2)
-                
+                print("after grad_tmp")
                 fdict_val, im_val = gener.gen_fixed(im0,init_logo)
                 fdict2[image_input] = prep(im_val)
                 ls.append(sess.run(cos_loss,feed_dict=fdict2)[0])
+                print("after cos_loss")
                 
                 # Gradients to the original sticker image
                 fdict[grads_input] = np.transpose(grad_tmp[0],[0,2,3,1])
@@ -180,6 +185,7 @@ def main(args):
                 moments = moments*moment_val + grads_on_logo*(1.-moment_val)
                 init_logo -= step_val*np.sign(moments)
                 init_logo = np.clip(init_logo,0.,1.)
+                print("after init_logo")
                 
                 # Logging
                 step += 1

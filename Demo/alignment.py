@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 import align.detect_face as detect_face
 
+
 # Transform grey image to RGB image
 def to_rgb(img):
     w, h = img.shape
@@ -51,8 +52,10 @@ def main(args):
 	for path in sorted(os.listdir(args.input_dir)):
 		if not os.path.exists(os.path.join(args.output_dir,path)):
 			os.mkdir(os.path.join(args.output_dir,path))
-		for name in sorted(os.listdir(os.path.join(args.input_dir,path))):
-			images.append(os.path.join(path,name))
+		images.append(path)
+
+		# for name in sorted(os.listdir(os.path.join(args.input_dir,path))):
+			# images.append(os.path.join(path,name))
 
 	# Alignment procedure
 	for path in tqdm(images):

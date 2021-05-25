@@ -14,12 +14,12 @@ def main(args):
 	labels = []
 	label = 0
 	for path in sorted(os.listdir(args.input_dir)):
-		for name in sorted(os.listdir(os.path.join(args.input_dir,path))):
-			if args.mx:
-				images.append([[label],os.path.join(args.input_dir,path,name)])
-			else:
-				images.append(os.path.join(args.input_dir,path,name))
-			labels.append(label)
+		# for name in sorted(os.listdir(os.path.join(args.input_dir,path))):
+		if args.mx:
+			images.append([[label],os.path.join(args.input_dir,path)])
+		else:
+			images.append(os.path.join(args.input_dir,path))
+		labels.append(label)
 		label += 1
 	
 	

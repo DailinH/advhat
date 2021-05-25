@@ -1,6 +1,6 @@
 import argparse
 import sys
-import tensorflow as tf
+import torch
 import numpy as np
 import skimage.io as io
 from skimage.transform import rescale
@@ -8,7 +8,6 @@ from skimage.transform import rescale
 # Prepare image to network input format
 def prep(im):
     if len(im.shape)==3:
-        print(im.shape)
         return np.transpose(im,[2,0,1]).reshape((1,3,112,112))*2-1
     elif len(im.shape)==4:
         return np.transpose(im,[0,3,1,2]).reshape((im.shape[0],3,112,112))*2-1
@@ -19,17 +18,22 @@ def main(args):
         sess = tf.Session()
         
         # Embedding model
-        with tf.gfile.GFile(args.model, "rb") as f:
-                graph_def = tf.GraphDef()
-                graph_def.ParseFromString(f.read())
-        tf.import_graph_def(graph_def,
-                                          input_map=None,
-                                          return_elements=None,
-                                          name="")
-        image_input = tf.get_default_graph().get_tensor_by_name('image_input:0')
-        keep_prob = tf.get_default_graph().get_tensor_by_name('keep_prob:0')
-        is_train = tf.get_default_graph().get_tensor_by_name('training_mode:0')
-        embedding = tf.get_default_graph().get_tensor_by_name('embedding:0')
+        # with open(args.model, "rb") as f:
+        #     buffer = io.BytesIO(f.read())
+        # torch.load(buffer)
+        # with tf.gfile.GFile(args.model, "rb") as f:
+        #         graph_def = tf.GraphDef()
+        #         graph_def.ParseFromString(f.read())
+
+
+        # tf.import_graph_def(graph_def,
+        #                                   input_map=None,
+        #                                   return_elements=None,
+        #                                   name="")
+        # image_input = tf.get_default_graph().get_tensor_by_name('image_input:0')
+        # keep_prob = tf.get_default_graph().get_tensor_by_name('keep_prob:0')
+        # is_train = tf.get_default_graph().get_tensor_by_name('training_mode:0')
+        # embedding = tf.get_default_graph().get_tensor_by_name('embedding:0')
 
         tfdict = {keep_prob:1.0, is_train:False}
         
