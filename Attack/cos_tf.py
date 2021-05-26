@@ -34,8 +34,8 @@ def main(args):
         tfdict = {keep_prob:1.0, is_train:False}
         
         # Embedding calculation
-        im1 = prep(rescale(io.imread(args.face1)/255.,112./600.,order=5))
-        im2 = prep(rescale(io.imread(args.face2)/255.,112./600.,order=5))
+        im1 = prep(rescale(io.imread(args.face1)/255.,112./600.,order=5, multichannel=True))
+        im2 = prep(rescale(io.imread(args.face2)/255.,112./600.,order=5, multichannel=True))
         tfdict[image_input] = im1
         emb1 = sess.run(embedding,feed_dict=tfdict)
         tfdict[image_input] = im2
